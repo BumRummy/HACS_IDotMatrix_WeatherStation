@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
+from .builtin_pack import ensure_builtin_pack
 from .const import (
     CONF_ADDRESS,
     CONF_WEATHER_ENTITY,
@@ -30,7 +31,9 @@ class IDMWeatherCoordinator(DataUpdateCoordinator):
         self.weather_entity = entry.data[CONF_WEATHER_ENTITY]
         pack_path = entry.data[CONF_PACK_PATH]
         if pack_path == "__bundled_giraffe__":
-            pack_path = str(Path(__file__).parent / "packs" / "giraffe_default.zip")
+            # Generate the bundled 64x64 giraffe GIF set locally on first use.
+            # This keeps the HACS repository text-only and avoids shipping large binaries.
+            pack_path = str(ensure_builtin_pack(Path(hass.config.path(".storage"))))
         self.pack = AnimationPack(pack_path, entry.data[CONF_SIZE])
         self.renderer = GifRenderer(entry.data[CONF_SIZE])
         self.transport = IDMTransport(hass, entry.data[CONF_ADDRESS])
