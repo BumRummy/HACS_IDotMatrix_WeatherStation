@@ -1,0 +1,19 @@
+{
+  "title": "iDotMatrix Weather Matrix",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up iDotMatrix Weather Matrix",
+        "description": "Connect a local iDotMatrix panel to a Home Assistant weather entity and GIF animation pack.",
+        "data": {
+          "address": "Bluetooth address",
+          "weather_entity": "Weather entity",
+          "pack_path": "Animation pack folder",
+          "size": "Panel size",
+          "time_format": "Clock format",
+          "refresh_seconds": "Refresh interval (seconds)"
+        }
+      }
+    }
+  }
+}
