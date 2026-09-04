@@ -1,10 +1,14 @@
 {
   "domain": "idm_weather_matrix",
   "name": "iDotMatrix Weather Matrix",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "documentation": "https://github.com/BumRummy/HACS_IDotMatrix_WeatherStation",
   "issue_tracker": "https://github.com/BumRummy/HACS_IDotMatrix_WeatherStation/issues",
   "config_flow": true,
   "iot_class": "local_push",
+  "bluetooth": [
+    {"local_name": "IDM-*"},
+    {"service_uuid": "000000fa-0000-1000-8000-00805f9b34fb"}
+  ],
   "requirements": ["Pillow>=10.0.0"]
 }
