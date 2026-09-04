@@ -1,15 +1,32 @@
 from __future__ import annotations
 
 from pathlib import Path
+import hashlib
 import json
+import tempfile
+import zipfile
 
 from .const import CONDITION_ALIASES, DEFAULT_LAYOUT
 
 
 class AnimationPack:
     def __init__(self, path: str, size: int):
-        self.path = Path(path)
+        source = Path(path)
         self.size = size
+
+        if source.suffix.lower() == ".zip":
+            digest = hashlib.sha1(str(source.resolve()).encode()).hexdigest()[:12]
+            extracted = Path(tempfile.gettempdir()) / "idm_weather_matrix" / digest
+            marker = extracted / ".ready"
+            if not marker.exists():
+                extracted.mkdir(parents=True, exist_ok=True)
+                with zipfile.ZipFile(source, "r") as archive:
+                    archive.extractall(extracted)
+                marker.write_text("ok", encoding="utf-8")
+            self.path = extracted
+        else:
+            self.path = source
+
         self.manifest = {}
         manifest = self.path / "manifest.json"
         if manifest.exists():
