@@ -29,62 +29,33 @@ FONT_5X7 = {
 }
 
 FONT_3X5 = {
-    "A": ["010","101","111","101","101"],
-    "B": ["110","101","110","101","110"],
-    "C": ["011","100","100","100","011"],
-    "D": ["110","101","101","101","110"],
-    "E": ["111","100","110","100","111"],
-    "F": ["111","100","110","100","100"],
-    "G": ["011","100","101","101","011"],
-    "H": ["101","101","111","101","101"],
-    "I": ["111","010","010","010","111"],
-    "J": ["001","001","001","101","010"],
-    "K": ["101","101","110","101","101"],
-    "L": ["100","100","100","100","111"],
-    "M": ["101","111","111","101","101"],
-    "N": ["101","111","111","111","101"],
-    "O": ["010","101","101","101","010"],
-    "P": ["110","101","110","100","100"],
-    "Q": ["010","101","101","111","011"],
-    "R": ["110","101","110","101","101"],
-    "S": ["011","100","010","001","110"],
-    "T": ["111","010","010","010","010"],
-    "U": ["101","101","101","101","111"],
-    "V": ["101","101","101","101","010"],
-    "W": ["101","101","111","111","101"],
-    "X": ["101","101","010","101","101"],
-    "Y": ["101","101","010","010","010"],
-    "Z": ["111","001","010","100","111"],
-    "0": ["111","101","101","101","111"],
-    "1": ["010","110","010","010","111"],
-    "2": ["110","001","010","100","111"],
-    "3": ["110","001","010","001","110"],
-    "4": ["101","101","111","001","001"],
-    "5": ["111","100","110","001","110"],
-    "6": ["011","100","111","101","111"],
-    "7": ["111","001","010","010","010"],
-    "8": ["111","101","111","101","111"],
-    "9": ["111","101","111","001","110"],
-    " ": ["0","0","0","0","0"],
-    "-": ["000","000","111","000","000"],
+    "A": ["010","101","111","101","101"], "B": ["110","101","110","101","110"],
+    "C": ["011","100","100","100","011"], "D": ["110","101","101","101","110"],
+    "E": ["111","100","110","100","111"], "F": ["111","100","110","100","100"],
+    "G": ["011","100","101","101","011"], "H": ["101","101","111","101","101"],
+    "I": ["111","010","010","010","111"], "J": ["001","001","001","101","010"],
+    "K": ["101","101","110","101","101"], "L": ["100","100","100","100","111"],
+    "M": ["101","111","111","101","101"], "N": ["101","111","111","111","101"],
+    "O": ["010","101","101","101","010"], "P": ["110","101","110","100","100"],
+    "Q": ["010","101","101","111","011"], "R": ["110","101","110","101","101"],
+    "S": ["011","100","010","001","110"], "T": ["111","010","010","010","010"],
+    "U": ["101","101","101","101","111"], "V": ["101","101","101","101","010"],
+    "W": ["101","101","111","111","101"], "X": ["101","101","010","101","101"],
+    "Y": ["101","101","010","010","010"], "Z": ["111","001","010","100","111"],
+    "0": ["111","101","101","101","111"], "1": ["010","110","010","010","111"],
+    "2": ["110","001","010","100","111"], "3": ["110","001","010","001","110"],
+    "4": ["101","101","111","001","001"], "5": ["111","100","110","001","110"],
+    "6": ["011","100","111","101","111"], "7": ["111","001","010","010","010"],
+    "8": ["111","101","111","101","111"], "9": ["111","101","111","001","110"],
+    " ": ["0","0","0","0","0"], "-": ["000","000","111","000","000"],
 }
 
 CONDITION_LABELS = {
-    "clear night": "CLEAR",
-    "partly cloudy": "CLOUDY",
-    "lightning rainy": "THUNDER",
-    "thunderstorm": "THUNDER",
-    "rainy": "RAIN",
-    "rain": "RAIN",
-    "snowy": "SNOW",
-    "snow": "SNOW",
-    "windy": "WINDY",
-    "fog": "FOGGY",
-    "sunny": "SUNNY",
-    "extreme heat": "HOT",
-    "freezing": "FREEZING",
+    "clear night": "CLEAR", "partly cloudy": "CLOUDY", "lightning rainy": "THUNDER",
+    "thunderstorm": "THUNDER", "rainy": "RAIN", "rain": "RAIN", "snowy": "SNOW",
+    "snow": "SNOW", "windy": "WINDY", "fog": "FOGGY", "sunny": "SUNNY",
+    "extreme heat": "HOT", "freezing": "FREEZING",
 }
-
 
 class GifRenderer:
     def __init__(self, size: int):
@@ -111,7 +82,6 @@ class GifRenderer:
         out_frames = []
         condition_key = values.condition.lower().strip()
         condition_text = CONDITION_LABELS.get(condition_key, values.condition.upper().replace("_", " "))
-
         for base in frames:
             frame = base.copy()
             draw = ImageDraw.Draw(frame)
@@ -119,17 +89,10 @@ class GifRenderer:
             self._draw_region(draw, layout["temperature"], values.temperature, FONT_5X7, 1)
             self._draw_region(draw, layout["condition"], condition_text, FONT_3X5, 1)
             out_frames.append(frame)
-
         bio = io.BytesIO()
         out_frames[0].save(
-            bio,
-            format="GIF",
-            save_all=True,
-            append_images=out_frames[1:],
-            duration=durations,
-            loop=loop,
-            disposal=2,
-            optimize=False,
+            bio, format="GIF", save_all=True, append_images=out_frames[1:],
+            duration=durations, loop=loop, disposal=2, optimize=False,
         )
         return bio.getvalue()
 
@@ -145,12 +108,10 @@ class GifRenderer:
             gw, gh = self._glyph_size(glyph)
             widths.append(gw * scale)
             height = max(height, gh * scale)
-        width = sum(widths) + max(0, len(widths) - 1) * spacing * scale
-        return width, height
+        return sum(widths) + max(0, len(widths)-1) * spacing * scale, height
 
     def _draw_pixel_text(self, draw, xy, text, font, color, spacing=1, scale=1):
-        _, y = xy
-        cursor = xy[0]
+        cursor, y = xy
         for ch in text:
             glyph = font.get(ch, font.get(" "))
             gw, _ = self._glyph_size(glyph)
@@ -163,15 +124,12 @@ class GifRenderer:
             cursor += (gw + spacing) * scale
 
     def _draw_region(self, draw, region, text, font, glyph_spacing=1):
-        x = int(region["x"])
-        y = int(region["y"])
-        w = int(region["w"])
-        h = int(region["h"])
-        bg = tuple(region.get("background", [0, 0, 0]))
+        x, y, w, h = (int(region[k]) for k in ("x", "y", "w", "h"))
+        bg = region.get("background", [0, 0, 0])
         fg = tuple(region.get("foreground", [255, 255, 255]))
         align = region.get("align", "left")
-
-        draw.rectangle((x, y, x + w - 1, y + h - 1), fill=bg)
+        if bg is not None:
+            draw.rectangle((x, y, x + w - 1, y + h - 1), fill=tuple(bg))
 
         scale = 1
         while True:
@@ -180,7 +138,6 @@ class GifRenderer:
                 scale += 1
             else:
                 break
-
         tw, th = self._measure(text, font, glyph_spacing, scale)
         if align == "center":
             tx = x + max(0, (w - tw) // 2)
@@ -189,4 +146,7 @@ class GifRenderer:
         else:
             tx = x + 1
         ty = y + max(0, (h - th) // 2)
-        self._draw_pixel_text(draw, (tx, ty), text, font, fg, spacing=glyph_spacing, scale=scale)
+
+        # One-pixel black shadow keeps white text readable without a black bar.
+        self._draw_pixel_text(draw, (tx + 1, ty + 1), text, font, (0, 0, 0), glyph_spacing, scale)
+        self._draw_pixel_text(draw, (tx, ty), text, font, fg, glyph_spacing, scale)
