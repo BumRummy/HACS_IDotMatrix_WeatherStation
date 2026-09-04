@@ -31,13 +31,12 @@ class IDMWeatherCoordinator(DataUpdateCoordinator):
         self.weather_entity = entry.data[CONF_WEATHER_ENTITY]
         pack_path = entry.data[CONF_PACK_PATH]
         if pack_path == "__bundled_giraffe__":
-            # Generate the bundled 64x64 giraffe GIF set locally on first use.
-            # This keeps the HACS repository text-only and avoids shipping large binaries.
             pack_path = str(ensure_builtin_pack(Path(hass.config.path(".storage"))))
         self.pack = AnimationPack(pack_path, entry.data[CONF_SIZE])
         self.renderer = GifRenderer(entry.data[CONF_SIZE])
         self.transport = IDMTransport(hass, entry.data[CONF_ADDRESS])
         self.time_format = entry.data[CONF_TIME_FORMAT]
+        self.refresh_seconds = entry.data[CONF_REFRESH_SECONDS]
 
         self.last_render_key = None
         self.last_gif_size = 0
@@ -46,7 +45,7 @@ class IDMWeatherCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name="iDotMatrix Weather Matrix",
-            update_interval=timedelta(seconds=entry.data[CONF_REFRESH_SECONDS]),
+            update_interval=timedelta(seconds=self.refresh_seconds),
         )
 
     async def _async_update_data(self):
@@ -100,6 +99,14 @@ class IDMWeatherCoordinator(DataUpdateCoordinator):
             await self.transport.upload_gif(gif_bytes)
             self.last_gif_size = len(gif_bytes)
             self.last_render_key = render_key
+
+        # A 60-second clock refresh should hit the wall-clock minute boundary,
+        # not 60 seconds after Home Assistant happened to start the coordinator.
+        if self.refresh_seconds == 60:
+            seconds_to_next_minute = 60.0 - now.second - (now.microsecond / 1_000_000.0)
+            self.update_interval = timedelta(seconds=max(0.25, seconds_to_next_minute))
+        else:
+            self.update_interval = timedelta(seconds=self.refresh_seconds)
 
         return {
             "condition": condition,
