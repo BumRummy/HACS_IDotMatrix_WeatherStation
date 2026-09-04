@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -29,15 +30,12 @@ class IDMWeatherCoordinator(DataUpdateCoordinator):
         self.weather_entity = entry.data[CONF_WEATHER_ENTITY]
         pack_path = entry.data[CONF_PACK_PATH]
         if pack_path == "__bundled_giraffe__":
-            from pathlib import Path
-            pack_path = str(Path(__file__).parent / "packs" / "giraffe_default")
+            pack_path = str(Path(__file__).parent / "packs" / "giraffe_default.zip")
         self.pack = AnimationPack(pack_path, entry.data[CONF_SIZE])
         self.renderer = GifRenderer(entry.data[CONF_SIZE])
         self.transport = IDMTransport(hass, entry.data[CONF_ADDRESS])
         self.time_format = entry.data[CONF_TIME_FORMAT]
 
-        self.last_condition = None
-        self.last_temp = None
         self.last_render_key = None
         self.last_gif_size = 0
 
