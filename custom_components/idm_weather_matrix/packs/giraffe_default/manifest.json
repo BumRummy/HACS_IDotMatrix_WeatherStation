@@ -1,0 +1,24 @@
+{
+  "name": "Giraffe Weather",
+  "resolution": [64, 64],
+  "description": "Default animated giraffe weather pack.",
+  "layout": {
+    "clock": {"x": 11, "y": 0, "w": 42, "h": 11, "align": "center", "background": [0,0,0], "foreground": [255,255,255]},
+    "temperature": {"x": 0, "y": 53, "w": 26, "h": 11, "align": "left", "background": [0,0,0], "foreground": [255,255,255]},
+    "condition": {"x": 27, "y": 53, "w": 37, "h": 11, "align": "right", "background": [0,0,0], "foreground": [255,255,255]}
+  },
+  "animations": {
+    "sunny": "sunny.gif",
+    "partly_cloudy": "partly_cloudy.gif",
+    "cloudy": "cloudy.gif",
+    "rain": "rain.gif",
+    "thunderstorm": "thunderstorm.gif",
+    "snow": "snow.gif",
+    "windy": "windy.gif",
+    "fog": "fog.gif",
+    "clear_night": "clear_night.gif",
+    "extreme_heat": "extreme_heat.gif",
+    "freezing": "freezing.gif",
+    "default": "default.gif"
+  }
+}
