@@ -9,7 +9,7 @@ SCENES = (
     "snow", "windy", "fog", "clear_night", "extreme_heat", "freezing", "default"
 )
 
-PACK_VERSION = "v2_fullscreen"
+PACK_VERSION = "v3_black_fullscreen"
 
 
 def _giraffe(draw: ImageDraw.ImageDraw, ox: int = -7, oy: int = 0, scarf: bool = False) -> None:
@@ -46,11 +46,11 @@ def _giraffe(draw: ImageDraw.ImageDraw, ox: int = -7, oy: int = 0, scarf: bool =
 
 
 def _scene(name: str, frame: int) -> Image.Image:
-    im = Image.new("RGB", (64, 64), (2, 4, 9))
+    # Full 64x64 black canvas. No colored background blocks.
+    im = Image.new("RGB", (64, 64), (0, 0, 0))
     d = ImageDraw.Draw(im)
 
     if name in ("sunny", "partly_cloudy", "cloudy", "default"):
-        d.rectangle((0, 0, 63, 63), fill=(5, 24, 55))
         if name != "cloudy":
             cx, cy = 54, 18
             r = 5 + (1 if frame % 4 == 1 else 0)
@@ -65,7 +65,6 @@ def _scene(name: str, frame: int) -> Image.Image:
         _giraffe(d)
 
     elif name == "rain":
-        d.rectangle((0, 0, 63, 63), fill=(3, 16, 32))
         d.pieslice((11, 7, 49, 33), 180, 360, fill=(238, 36, 45))
         d.line((30, 20, 30, 50), fill=(210,210,210), width=1)
         d.arc((27, 46, 35, 55), 0, 180, fill=(210,210,210))
@@ -76,7 +75,6 @@ def _scene(name: str, frame: int) -> Image.Image:
             d.line((x, y, max(0,x-1), min(63,y+2)), fill=(0, 205, 255))
 
     elif name == "thunderstorm":
-        d.rectangle((0, 0, 63, 63), fill=(4, 7, 13))
         for x in (8, 18, 47, 57):
             d.ellipse((x-7, 8, x+7, 17), fill=(115,115,125))
         _giraffe(d)
@@ -88,7 +86,6 @@ def _scene(name: str, frame: int) -> Image.Image:
             d.line((x,y,max(0,x-1),min(63,y+2)), fill=(90,120,150))
 
     elif name == "snow":
-        d.rectangle((0, 0, 63, 63), fill=(5, 22, 48))
         _giraffe(d, scarf=True)
         for i in range(20):
             x = (i*13 + frame*2) % 64
@@ -98,7 +95,6 @@ def _scene(name: str, frame: int) -> Image.Image:
                 d.line((x-1,y,x+1,y), fill=(250,250,255))
 
     elif name == "windy":
-        d.rectangle((0, 0, 63, 63), fill=(5, 25, 45))
         _giraffe(d, ox=-4)
         for row in range(5):
             y = 7 + row*11
@@ -110,7 +106,6 @@ def _scene(name: str, frame: int) -> Image.Image:
             d.line((x,y,x+4,y+2), fill=(90,200,45), width=2)
 
     elif name == "fog":
-        d.rectangle((0, 0, 63, 63), fill=(55, 58, 60))
         d.polygon((4,58,13,14,22,58), fill=(25,30,28))
         d.polygon((43,58,53,10,63,58), fill=(25,30,28))
         _giraffe(d, oy=2)
@@ -120,7 +115,6 @@ def _scene(name: str, frame: int) -> Image.Image:
             d.line((0+shift,y,48+shift,y), fill=(165,165,165), width=2)
 
     elif name == "clear_night":
-        d.rectangle((0, 0, 63, 63), fill=(1, 7, 20))
         d.ellipse((48,7,61,20), fill=(238,238,225))
         _giraffe(d)
         for i in range(14):
@@ -130,7 +124,6 @@ def _scene(name: str, frame: int) -> Image.Image:
                 d.point((x,y), fill=(255,215,35))
 
     elif name == "extreme_heat":
-        d.rectangle((0, 0, 63, 63), fill=(88, 15, 4))
         d.ellipse((48,6,62,20), fill=(255,175,0))
         _giraffe(d)
         for i in range(7):
@@ -143,7 +136,6 @@ def _scene(name: str, frame: int) -> Image.Image:
             d.arc((x,36-frame%3,x+8,51-frame%3), 180, 350, fill=(255,80,0))
 
     elif name == "freezing":
-        d.rectangle((0, 0, 63, 63), fill=(3, 15, 35))
         _giraffe(d, scarf=True)
         for i in range(18):
             x = (i*13 + frame) % 64
@@ -184,7 +176,7 @@ def ensure_builtin_pack(base_dir: Path) -> Path:
         )
 
     manifest = {
-        "name": "Giraffe Weather Fullscreen",
+        "name": "Giraffe Weather Black Fullscreen",
         "resolution": [64, 64],
         "layout": {
             "clock": {"x":9,"y":0,"w":46,"h":10,"align":"center","background":None,"foreground":[255,255,255]},
